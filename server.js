@@ -24,7 +24,7 @@ app.use(passport.session());
 
 app.use(
 	cors({
-		origin: "*",
+		origin: true,
 		methods: "GET,POST,PUT,DELETE",
 		credentials: true,
 	})
