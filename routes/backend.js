@@ -66,14 +66,14 @@ router.post('/subject', async (req, res) => {
 
 // update subject
 router.put('/subject', async (req, res) => {
-    const {_id, subject_id} = req.body;
+    const {subject_id} = req.body;
 
     const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
 
     const db = client.db(`${process.env.DB_NAME}`);
     const subjects = db.collection('subject');
 
-    const result = await subjects.findOneAndUpdate({_id: _id, subject_id: subject_id}, {$set: req.body});
+    const result = await subjects.findOneAndUpdate({subject_id: subject_id}, {$set: req.body});
     client.close();
 
     if(result.value == null){
@@ -93,14 +93,14 @@ router.put('/subject', async (req, res) => {
 
 // delete subject
 router.delete('/subject', async (req, res) => {
-    const {_id, subject_id} = req.body;
+    const {subject_id} = req.body;
 
     const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
 
     const db = client.db(`${process.env.DB_NAME}`);
     const subjects = db.collection('subject');
 
-    const result = await subjects.findOneAndDelete({_id: _id, subject_id: subject_id});
+    const result = await subjects.findOneAndDelete({subject_id: subject_id});
     client.close();
 
     if(result.value == null){
@@ -177,14 +177,14 @@ router.post('/subjectGened', async (req, res) => {
 
 // update subject gened
 router.put('/subjectGened', async (req, res) => {
-    const {_id, subject_id} = req.body;
+    const {subject_id} = req.body;
 
     const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
     
     const db = client.db(`${process.env.DB_NAME}`);
     const subject_gened = db.collection('subject_gened');
 
-    const result = subject_gened.findOneAndUpdate({_id: _id, subject_id: subject_id}, {$set: req.body});
+    const result = subject_gened.findOneAndUpdate({subject_id: subject_id}, {$set: req.body});
     client.close();
 
     if(result.value == null){
@@ -203,14 +203,14 @@ router.put('/subjectGened', async (req, res) => {
 
 // delete subject gened
 router.delete('/subjectGened', async (req, res) => {
-    const {_id, subject_id} = req.body;
+    const {subject_id} = req.body;
 
     const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
 
     const db = client.db(`${process.env.DB_NAME}`);
     const subject_gened = db.collection('subject_gened');
 
-    const result = await subject_gened.findOneAndDelete({_id: _id, subject_id: subject_id});
+    const result = await subject_gened.findOneAndDelete({subject_id: subject_id});
     client.close();
 
     if(result.value == null){
