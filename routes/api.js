@@ -31,6 +31,26 @@ router.get('/subject', async (req, res) => {
     }
 });
 
+router.post('/subject', async (req, res) => {
+    let {subject_id} = req.body;
+
+    let client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
+
+    const db = client.db(`${process.env.DB_NAME}`);
+    const subjects = db.collection('subject');
+
+    const doc = subjects.find({subject_id: subject_id});
+    const result = await doc.toArray();
+    client.close();
+    console.log(result)
+
+    res.status(200).json({
+        error: false,
+        message: "subjects id req",
+        match_subject: result
+    });
+});
+
 router.post('/courseDetail', async (req, res) => {
 
     let {curriculum_id} = req.body;
