@@ -4,6 +4,7 @@ const cors = require("cors");
 const passport = require("passport");
 const authRoute = require("./routes/auth");
 const apiRoute = require("./routes/api");
+const backendRoute = require("./routes/backend");
 const cookieSession = require("cookie-session");
 const passportStrategy = require("./passport");
 const mongoose = require('mongoose');
@@ -32,6 +33,7 @@ app.use(
 
 app.use("/auth", authRoute);
 app.use("/api", apiRoute);
+app.use("/backend/api",backendRoute);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`Listenting on port ${port}...`));
