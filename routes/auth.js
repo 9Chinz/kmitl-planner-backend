@@ -4,20 +4,20 @@ const MongoClient = require('mongodb').MongoClient
 
 router.get("/login/success", async (req, res) => {
 	if (req.user) {
-		const user_id = req.user.id
+		const user_id = req.user.user_id
 		const user_email = req.user.emails[0].value
 		let client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
 
 		const db = client.db(`${process.env.DB_NAME}`);
 		const user = db.collection('user');
 
-		const doc = user.find({id: user_id});
+		const doc = user.find({user_id: user_id});
 		const result = await doc.toArray();
 		client.close();
 
 		if (result.length == 0){
 			const newUser = {
-				id: user_id,
+				user_id: user_id,
 				email: user_email,
 				role: "user"
 			}
