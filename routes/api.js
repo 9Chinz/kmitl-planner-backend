@@ -32,14 +32,14 @@ router.get('/subject', async (req, res) => {
 });
 
 router.post('/subject', async (req, res) => {
-    const {subject_id} = req.body;
+    const {subject_name} = req.body;
 
     const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
 
     const db = client.db(`${process.env.DB_NAME}`);
     const subjects = db.collection('subject');
 
-    const doc = subjects.find({subject_id: subject_id});
+    const doc = subjects.find({subject_name: subject_name});
     const result = await doc.toArray();
     client.close();
 
@@ -75,14 +75,14 @@ router.get('/subjectGened', async (req, res) => {
 });
 
 router.post('/subjectGened', async (req, res) => {
-    const {subject_id} = req.body;
+    const {subject_name} = req.body;
 
     const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
 
     const db = client.db(`${process.env.DB_NAME}`);
     const subject_gened = db.collection('subject_gened');
 
-    const doc = subject_gened.find({subject_id: subject_id});
+    const doc = subject_gened.find({subject_name: subject_name});
     const result = await doc.toArray();
     client.close();
 
