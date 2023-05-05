@@ -32,6 +32,32 @@ router.get('/subject', async (req, res) => {
     }
 });
 
+router.post('/subject/specific', async (req, res) => {
+    const {subject_id} = req.body;
+
+    const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
+
+    const db = client.db(`${process.env.DB_NAME}`);
+    const subjects = db.collection('subject');
+
+    const doc = subjects.find({subject_id: subject_id});
+    const result = await doc.toArray();
+    client.close();
+
+    if (result.length > 0){
+        res.status(200).json({
+            error: false,
+            message: "subject detail",
+            match_subject: result
+        });
+    }else{
+        res.status(404).json({
+            error: true,
+            message: "not found any subject",
+        });
+    }
+});
+
 // add one subject that not duplicated
 router.post('/subject', async (req, res) => {
     const {subject_id, type, curriculum_id} = req.body;
@@ -102,7 +128,6 @@ router.delete('/subject', async (req, res) => {
 
     const result = await subjects.findOneAndDelete({subject_id: subject_id});
     client.close();
-
     if(result.value == null){
         res.status(404).json({
             error: true,
@@ -133,6 +158,32 @@ router.get('/subjectGened', async (req, res) => {
         res.status(200).json({
             error: false,
             message: "all subject gened detail",
+            match_subject: result
+        });
+    }else{
+        res.status(404).json({
+            error: true,
+            message: "not found any subject gened",
+        });
+    }
+});
+
+router.post('/subjectGened/specific', async (req, res) => {
+    const {subject_id} = req.body;
+
+    const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
+
+    const db = client.db(`${process.env.DB_NAME}`);
+    const subject_gened = db.collection('subject_gened');
+
+    const doc = subject_gened.find({subject_id: subject_id});
+    const result = await doc.toArray();
+    client.close();
+
+    if (result.length > 0){
+        res.status(200).json({
+            error: false,
+            message: "subject gened detail",
             match_subject: result
         });
     }else{
@@ -184,7 +235,7 @@ router.put('/subjectGened', async (req, res) => {
     const db = client.db(`${process.env.DB_NAME}`);
     const subject_gened = db.collection('subject_gened');
 
-    const result = subject_gened.findOneAndUpdate({subject_id: subject_id}, {$set: req.body});
+    const result = await subject_gened.findOneAndUpdate({subject_id: subject_id}, {$set: req.body});
     client.close();
 
     if(result.value == null){
@@ -253,9 +304,36 @@ router.get('/curriculum', async (req, res) => {
     }
 });
 
+// get one curriculum
+router.post('/curriculum/specific', async (req, res) => {
+    const {curriculum_id} = req.body;
+
+    const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
+
+    const db = client.db(`${process.env.DB_NAME}`);
+    const curriculum = db.collection('curriculum');
+
+    const doc = curriculum.find({curriculum_id: curriculum_id});
+    const result = await doc.toArray();
+    client.close();
+
+    if (result.length > 0){
+        res.status(200).json({
+            error: false,
+            message: "curriculum detail",
+            match_curriculum: result
+        });
+    }else{
+        res.status(404).json({
+            error: true,
+            message: "not found any curriculum",
+        });
+    }
+});
+
 // insert one curriculum that not duplicated
 router.post('/curriculum', async (req, res) => {
-    const {curriculum_id, curriculum_name, type_id, total_credit} = req.body;
+    const {curriculum_id} = req.body;
 
     const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
 
@@ -266,8 +344,8 @@ router.post('/curriculum', async (req, res) => {
 
     const result = await doc.toArray();
 
-    if(result.length == 0){
-        const insert = await curriculum.insertOne(req.body);
+    if(result.length < 8){
+        const insert = await curriculum.insertOne(req.body.data);
         client.close();
         res.status(200).json({
             error: false,
@@ -286,15 +364,14 @@ router.post('/curriculum', async (req, res) => {
 
 // update curriculum
 router.put('/curriculum', async (req, res) => {
-    const {curriculum_id} = req.body;
+    const {curriculum_id, type_id} = req.body.data;
 
     const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
 
     const db = client.db(`${process.env.DB_NAME}`);
     const curriculum = db.collection('curriculum');
 
-    const result = curriculum.updateMany({curriculum_id: curriculum_id}, {$set: req.body});
-
+    const result = await curriculum.findOneAndUpdate({curriculum_id: curriculum_id, type_id: type_id}, {$set: req.body.data});
     client.close();
     
     if(result.modifiedCount == 0){
@@ -316,12 +393,14 @@ router.delete('/curriculum', async (req, res) => {
 
     const {curriculum_id} = req.body;
 
+    console.log(curriculum_id)
+
     const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
 
     const db = client.db(`${process.env.DB_NAME}`);
     const curriculum = db.collection('curriculum');
 
-    const result = await curriculum.deleteMany({curriculum_id: curriculum_id});
+    const result = await curriculum.deleteMany({curriculum_id: parseInt(curriculum_id)});
     client.close();
 
     if(result.deletedCount == 0){
@@ -334,6 +413,32 @@ router.delete('/curriculum', async (req, res) => {
             error: false,
             message: "delete curriculum success",
             delete_subject: result
+        });
+    }
+});
+
+// get all type
+router.get('/type', async (req, res) => {
+
+    const client = await MongoClient.connect(`${process.env.MONGO_ENDPOINT}`, { useUnifiedTopology: true });
+
+    const db = client.db(`${process.env.DB_NAME}`);
+    const type = db.collection('type');
+
+    const doc = type.find();
+    const result = await doc.toArray();
+    client.close();
+
+    if (result.length > 0){
+        res.status(200).json({
+            error: false,
+            message: "all type detail",
+            match_type: result
+        });
+    }else{
+        res.status(404).json({
+            error: true,
+            message: "not found any type",
         });
     }
 });
