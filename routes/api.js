@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const MongoClient = require('mongodb').MongoClient
 
+// test path for api
 router.get('/test', (req, res) => {
     res.status(200).json({
-        message: 'test'
+        message: 'test api'
     });
 });
 
@@ -15,7 +16,7 @@ router.get('/subject', async (req, res) => {
 
     const doc = subjects.find();
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({
@@ -41,7 +42,7 @@ router.post('/subject', async (req, res) => {
 
     const doc = subjects.find({subject_name: subject_name});
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     res.status(200).json({
         error: false,
@@ -58,7 +59,7 @@ router.get('/subjectGened', async (req, res) => {
 
     const doc = subject_gened.find();
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({
@@ -84,7 +85,7 @@ router.post('/subjectGened', async (req, res) => {
 
     const doc = subject_gened.find({subject_name: subject_name});
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     res.status(200).json({
         error: false,
@@ -104,7 +105,7 @@ router.post('/courseDetail', async (req, res) => {
 
     const doc = curriculums.find({curriculum_id: curriculum_id});
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({
@@ -129,7 +130,7 @@ router.get('/type', async (req, res) => {
 
     const doc = type.find();
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({
@@ -154,7 +155,7 @@ router.post('/userTable', async (req, res) => {
 
     const doc = user_table.find({user_id: user_id});
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if(result.length > 0){
         res.status(200).json({
@@ -183,12 +184,12 @@ router.put('/userTable', async (req, res) => {
     let is_have_data = false
     if(result.length > 0){
         is_have_data = true
-        user_table.updateOne({user_id: user_id}, {$push: {curriculum_id: curriculum_id, year: year, subject_id: subject_id}})
+        await user_table.updateOne({user_id: user_id}, {$push: {curriculum_id: curriculum_id, year: year, subject_id: subject_id}})
     }else{
-        user_table.insertOne({user_id: user_id, curriculum_id: curriculum_id, year: year, subject_id: subject_id})
+        await user_table.insertOne({user_id: user_id, curriculum_id: curriculum_id, year: year, subject_id: subject_id})
     }
 
-    client.close();
+    await client.close();
 
     res.status(200).json({
         error: false,

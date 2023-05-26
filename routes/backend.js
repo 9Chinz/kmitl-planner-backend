@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const MongoClient = require('mongodb').MongoClient
 
+// test path for backend
 router.get('/test', (req, res) => {
     res.status(200).json({
-        message: 'test'
+        message: 'test backend'
     });
 });
 
@@ -16,7 +17,7 @@ router.get('/subject', async (req, res) => {
 
     const doc = subjects.find();
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({
@@ -42,7 +43,7 @@ router.post('/subject/specific', async (req, res) => {
 
     const doc = subjects.find({subject_id: subject_id});
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({
@@ -73,7 +74,7 @@ router.post('/subject', async (req, res) => {
 
     if(result.length > 0){
         if(result[0].subject_id == subject_id && result[0].type == type && result[0].curriculum_id == curriculum_id){
-            client.close();
+            await client.close();
             return res.status(200).json({
                 error: false,
                 message: "subject is duplicate",
@@ -82,7 +83,7 @@ router.post('/subject', async (req, res) => {
         }
     }
     const insert = await subjects.insertOne(req.body);
-    client.close();
+    await client.close();
     res.status(200).json({
         error: false,
         message: "insert subject success",
@@ -100,7 +101,7 @@ router.put('/subject', async (req, res) => {
     const subjects = db.collection('subject');
 
     const result = await subjects.findOneAndUpdate({subject_id: subject_id}, {$set: req.body});
-    client.close();
+    await client.close();
 
     if(result.value == null){
         res.status(404).json({
@@ -127,7 +128,7 @@ router.delete('/subject', async (req, res) => {
     const subjects = db.collection('subject');
 
     const result = await subjects.findOneAndDelete({subject_id: subject_id});
-    client.close();
+    await client.close();
     if(result.value == null){
         res.status(404).json({
             error: true,
@@ -152,7 +153,7 @@ router.get('/subjectGened', async (req, res) => {
 
     const doc = subject_gened.find();
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({
@@ -178,7 +179,7 @@ router.post('/subjectGened/specific', async (req, res) => {
 
     const doc = subject_gened.find({subject_id: subject_id});
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({
@@ -209,7 +210,7 @@ router.post('/subjectGened', async (req, res) => {
 
     if(result.length > 0){
         if(result[0].subject_id == subject_id && result[0].type == type){
-            client.close();
+            await client.close();
             return res.status(200).json({
                 error: false,
                 message: "subject gened is duplicate",
@@ -218,7 +219,7 @@ router.post('/subjectGened', async (req, res) => {
         }
     }
     const insert = await subject_gened.insertOne(req.body);
-    client.close();
+    await client.close();
     res.status(200).json({
         error: false,
         message: "insert subject gened success",
@@ -236,7 +237,7 @@ router.put('/subjectGened', async (req, res) => {
     const subject_gened = db.collection('subject_gened');
 
     const result = await subject_gened.findOneAndUpdate({subject_id: subject_id}, {$set: req.body});
-    client.close();
+    await client.close();
 
     if(result.value == null){
         res.status(404).json({
@@ -262,7 +263,7 @@ router.delete('/subjectGened', async (req, res) => {
     const subject_gened = db.collection('subject_gened');
 
     const result = await subject_gened.findOneAndDelete({subject_id: subject_id});
-    client.close();
+    await client.close();
 
     if(result.value == null){
         res.status(404).json({
@@ -288,7 +289,7 @@ router.get('/curriculum', async (req, res) => {
 
     const doc = curriculum.find();
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({
@@ -315,7 +316,7 @@ router.post('/curriculum/specific', async (req, res) => {
 
     const doc = curriculum.find({curriculum_id: curriculum_id});
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({
@@ -346,14 +347,14 @@ router.post('/curriculum', async (req, res) => {
 
     if(result.length < 8){
         const insert = await curriculum.insertOne(req.body.data);
-        client.close();
+        await client.close();
         res.status(200).json({
             error: false,
             message: "insert curriculum success",
             insert_subject: insert
         });
     }else{
-        client.close();
+        await client.close();
         res.status(200).json({
             error: false,
             message: "curriculum is duplicate",
@@ -372,7 +373,7 @@ router.put('/curriculum', async (req, res) => {
     const curriculum = db.collection('curriculum');
 
     const result = await curriculum.findOneAndUpdate({curriculum_id: curriculum_id, type_id: type_id}, {$set: req.body.data});
-    client.close();
+    await client.close();
     
     if(result.modifiedCount == 0){
         res.status(404).json({
@@ -401,7 +402,7 @@ router.delete('/curriculum', async (req, res) => {
     const curriculum = db.collection('curriculum');
 
     const result = await curriculum.deleteMany({curriculum_id: parseInt(curriculum_id)});
-    client.close();
+    await client.close();
 
     if(result.deletedCount == 0){
         res.status(404).json({
@@ -427,7 +428,7 @@ router.get('/type', async (req, res) => {
 
     const doc = type.find();
     const result = await doc.toArray();
-    client.close();
+    await client.close();
 
     if (result.length > 0){
         res.status(200).json({

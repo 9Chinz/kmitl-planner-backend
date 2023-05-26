@@ -2,6 +2,13 @@ const router = require("express").Router();
 const passport = require("passport");
 const MongoClient = require('mongodb').MongoClient
 
+// test path fro auth
+router.get('/test', (req, res) => {
+    res.status(200).json({
+        message: 'test auth'
+    });
+});
+
 router.get("/login/success", async (req, res) => {
 	if (req.user) {
 		const user_id = req.user.user_id
@@ -13,7 +20,7 @@ router.get("/login/success", async (req, res) => {
 
 		const doc = user.find({user_id: user_id});
 		const result = await doc.toArray();
-		client.close();
+		await client.close();
 
 		if (result.length == 0){
 			const newUser = {
@@ -21,7 +28,7 @@ router.get("/login/success", async (req, res) => {
 				email: user_email,
 				role: "user"
 			}
-			user.insertOne(newUser)
+			await user.insertOne(newUser)
 		}
 
 		res.status(200).json({

@@ -36,4 +36,11 @@ app.use("/api", apiRoute);
 app.use("/backend/api",backendRoute);
 
 const port = process.env.PORT || 8080;
-app.listen(port, () => console.log(`Listenting on port ${port}...`));
+app.listen(port, () => {
+	console.log(`Listenting on port ${port}...`)
+	console.log(`client id: ${process.env.CLIENT_ID}`)
+	console.log(`client secret: ${process.env.CLIENT_SECRET}`)
+	console.log(`client url: ${process.env.CLIENT_URL}`)
+	console.log(`mongo endpoint: ${process.env.MONGO_ENDPOINT}`)
+	console.log(`db name: ${process.env.DB_NAME}`)
+});
